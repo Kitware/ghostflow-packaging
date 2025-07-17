@@ -23,11 +23,11 @@ jobs:
       matrix:
         include:
           - docker-image: webhook-listen
-            ref: 7fc2b4a785c6f9417629e40365ea95ff3ecdca72
-            image-tags: ghcr.io/kitware/webhook-listen:0.0.1
+            ref: 482f924e54276eb2772909df03db9c578e019cdf
+            image-tags: ghcr.io/kitware/webhook-listen:1.2.2-1
           - docker-image: ghostflow-director
             ref: de97f982417d575f3f64d09bcfac9f6895e175f8
-            image-tags: ghcr.io/kitware/ghostflow-director:0.0.1
+            image-tags: ghcr.io/kitware/ghostflow-director:0.1.0-1
 
     steps:
       - name: Checkout
@@ -47,27 +47,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           logout: false
 
-      # Build the builder image which also creates a vendored tarball
-      - name: Build ${{ matrix.docker-image }}-builder
-        id: docker-build-builder
-        uses: docker/build-push-action@14487ce63c7a62a4a324b0bfb37086795e31c6c1 # v6.16.0
-        with:
-          context: ./docker/builder
-          build-args: |
-            APP=${{ matrix.docker-image }}
-            REF=${{ matrix.ref }}
-          file: ./docker/builder/Dockerfile
-          push: false
-          tags: ${{ matrix.docker-image }}-builder:latest
-          platforms: linux/amd64
-
-      # Extract and upload tarball artifact
-      - name: Extract Vendored Tarball
-        if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Create Vendored Tarball
         run: |
-          docker run \
-            -v ${{ github.workspace }}:/stage ${{ steps.docker-build-builder.outputs.imageid }} \
-            -c "cp ${{ matrix.docker-image }}-${{ matrix.ref }}.tar.xz /stage"
+          bash ./docker/builder/install.sh ${{ matrix.docker-image }} ${{ matrix.ref }}
 
       - name: Upload Tarball
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -84,11 +66,12 @@ jobs:
         id: docker-build-push
         uses: docker/build-push-action@14487ce63c7a62a4a324b0bfb37086795e31c6c1 # v6.16.0
         with:
-          context: ./docker/app-only
-          file: ./docker/app-only/Dockerfile
+          context: ./docker/builder
+          file: ./docker/builder/Dockerfile
           build-args: |
             APP=${{ matrix.docker-image }}
-          push: false # ${{ github.ref == 'refs/heads/main' }} # only publish image on push to main
+            REF=${{ matrix.ref }}
+          push: ${{ github.ref == 'refs/heads/main' }} # only publish image on push to main
           tags: ${{ matrix.image-tags }}
           platforms: linux/amd64
 
