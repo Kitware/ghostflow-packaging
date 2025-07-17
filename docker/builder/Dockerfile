@@ -9,7 +9,7 @@ arg REF
 
 # Install dependencies
 copy --chmod=755 install.sh /build
-run bash /build/install.sh $APP $REF
+run bash /build/install.sh --install $APP $REF
 
 from rust:latest
 
