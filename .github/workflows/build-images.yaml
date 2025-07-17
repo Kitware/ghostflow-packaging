@@ -50,16 +50,13 @@ jobs:
       - name: Create Vendored Tarball
         run: |
           bash ./docker/builder/install.sh --vendor ${{ matrix.docker-image }} ${{ matrix.ref }}
-          ls
-          pwd
-          realpath $(find . -name ${{ matrix.docker-image }}-${{ matrix.ref }}.tar.xz)
 
       - name: Upload Tarball
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.docker-image }}-${{ matrix.ref }}.tar.xz
-          path: ./${{ matrix.docker-image }}-${{ matrix.ref }}.tar.xz
+          name: ${{ matrix.docker-image }}-${{ matrix.ref }}-vendored.tar.xz
+          path: ${{ matrix.docker-image }}-${{ matrix.ref }}-vendored.tar.xz
           if-no-files-found: error
           retention-days: 1
           overwrite: true
