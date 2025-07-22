@@ -23,11 +23,11 @@ jobs:
       matrix:
         include:
           - docker-image: webhook-listen
-            ref: 482f924e54276eb2772909df03db9c578e019cdf
+            ref: 4b53a94913341ece422364b8dc26ad3ef6b4f423
             image-tags: ghcr.io/kitware/webhook-listen:1.2.2-1
           - docker-image: ghostflow-director
-            ref: de97f982417d575f3f64d09bcfac9f6895e175f8
-            image-tags: ghcr.io/kitware/ghostflow-director:0.1.0.20250722-1
+            ref: 8423fa131285eec02d6cc7f9aedd5eeb41e09581
+            image-tags: ghcr.io/kitware/ghostflow-director:0.1.0.20250721-1
 
     steps:
       - name: Checkout
