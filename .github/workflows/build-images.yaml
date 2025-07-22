@@ -27,7 +27,7 @@ jobs:
             image-tags: ghcr.io/kitware/webhook-listen:1.2.2-1
           - docker-image: ghostflow-director
             ref: de97f982417d575f3f64d09bcfac9f6895e175f8
-            image-tags: ghcr.io/kitware/ghostflow-director:0.1.0-1
+            image-tags: ghcr.io/kitware/ghostflow-director:0.1.0.20250722-1
 
     steps:
       - name: Checkout
